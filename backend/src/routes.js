@@ -53,6 +53,7 @@ router.delete("/removetodo/:id",async(req,res)=>{
   // get clear completed
   router.get("/clearcompleted",async(req,res)=>{
     const result=await Todo.remove({'completed':'true'});
+    console.log(result,"56");
     const todos=await Todo.find();
      res.send(todos);
    });
@@ -82,7 +83,7 @@ router.delete("/removetodo/:id",async(req,res)=>{
     }
     res.send(todos);
   })
-  // markcompeleted
+  // checked
   router.patch("/markcomplete/:id",async(req,res)=>{
     try {
       let id=req.params.id;
@@ -96,7 +97,7 @@ router.delete("/removetodo/:id",async(req,res)=>{
       res.send(error); 
     }
   })
-  // markuncompleted
+  //unchecked
   router.patch("/markuncomplete/:id",async(req,res)=>{
     try {
       let id=req.params.id;

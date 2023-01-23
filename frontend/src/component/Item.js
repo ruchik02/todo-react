@@ -1,8 +1,10 @@
 import React,{useState,useEffect} from 'react'
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 const Item = () => {
    const [todos, setTodos] = useState([]);
    const [task, setTask] = useState("");
+   const [filter,setFilter]=useState("All");
    useEffect(() => {
       const getTodos = async () => {
         const res = await axios.get('http://localhost:8000/gettodos');
@@ -10,6 +12,7 @@ const Item = () => {
       };
       getTodos();
     }, [todos]);
+   //  add todos
 const addTodo = async (e) => {
    e.preventDefault();
    const res = await axios.post("http://localhost:8000/addtodo", { task, completed: false });
@@ -17,6 +20,7 @@ const addTodo = async (e) => {
    setTask("");
   
 }
+// remove todos
 const handleRemove= async(id)=>{
    try {
      await axios.delete(`http://localhost:8000/removetodo/${id}`);
@@ -25,6 +29,53 @@ const handleRemove= async(id)=>{
       console.log(err,"27");
     }  
 }
+// checked
+const markComplete = async (id) => {
+   try {
+     await axios.patch(`http://localhost:8000/markcomplete/${id}`);
+     const todos = await axios.get("http://localhost:8000/gettodos");
+     setTodos(todos.data);
+   } catch (error) {
+     console.error(error.message);
+   }
+ };
+// unchecked
+ const markUncomplete = async (id) => {
+   try {
+     await axios.patch(`http://localhost:8000/markuncomplete/${id}`);
+     const todos = await axios.get("http://localhost:8000/gettodos");
+     setTodos(todos.data);
+   } catch (error) {
+     console.error(error.message);
+   }
+ };
+
+// clear completed
+const handleClearCompleted=async()=>{
+   try{
+      await axios.get('http://localhost:8000/clearcompleted');
+      setTodos(todos.filter((todo) => !todo.completed));
+   }catch(err){
+      console.log(err);
+   }
+}
+// all
+// active
+const Active=(e)=>{
+   e.preventDefault()
+   setFilter({filter:'Active'})
+}
+// completed
+const Completed=(e)=>{
+   e.preventDefault();
+   setFilter({filter:'Completed'});
+}
+// All
+const All=(e)=>{
+   e.preventDefault();
+   setFilter({filter:'All'});
+}
+// count todos
 let count=todos.filter((i)=>{return i.completed===false}).length;
   return (
     <div className="container">
@@ -48,10 +99,28 @@ let count=todos.filter((i)=>{return i.completed===false}).length;
    <ul id="ul" className="todo-list"> 
    {
       todos.map((todo)=>(
-         <li key={todo.id}>
-                        <input type="checkbox"  name="checkbox" id="checker" className="check-box"/>
-                        <label htmlFor="todoLbael" className="data">{todo.task}</label>
-                        <label htmlFor="todoCross" className="cross" onClick={() => handleRemove(todo._id)}>X</label>
+         <li key={uuidv4()}>
+                        <input type="checkbox" 
+                         checked={todo.completed} 
+                         name="checkbox" id="checker" 
+                         className="check-box"
+                         onChange={() => {
+                           if (todo.completed) {
+                             markUncomplete(todo._id);
+
+                           } else {
+                             markComplete(todo._id);
+                           }
+                         }}
+
+                        />
+                        <label 
+                         htmlFor="todoLbael" 
+                         className="data" style={{textDecoration: todo.completed ? "line-through" : "none"}}>{todo.task}</label>
+                        <label
+                         htmlFor="todoCross"
+                         className="cross"
+                         onClick={() => handleRemove(todo._id)}>X</label>
        </li>
       ))
    }
@@ -62,19 +131,20 @@ let count=todos.filter((i)=>{return i.completed===false}).length;
        <span id="todo-count"><strong id="count">{count}</strong> items left</span>
        <ul className="filters">
           <li>
-             <a href className="selected">All</a>
+             <a href='/all' className="selected">All</a>
           </li>
           <li>
-             <a href className="acive">Active</a>
+             <a href='/active' className="acive">Active</a>
           </li>
           <li>
-             <a href className="completed">Completed</a>
+             <a href='/completed' className="completed">Completed</a>
           </li>
        </ul>
-       <button className="clear-completed" id="clear-completed">Clear completed</button>
+       <button className="clear-completed" id="clear-completed" onClick={handleClearCompleted}>Clear completed</button>
  </div>
 </div>
 </div>
   )
 }
+
 export default Item
