@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const Todo = require("./todo.js");
-const mongoose  = require("mongoose");
 const router = express.Router();
 app.use(router);
 // get
