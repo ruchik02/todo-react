@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 require('dotenv').config()
 const link='mongodb://ruchika:ruchikasharma@ac-h2nemxv-shard-00-00.mfluhic.mongodb.net:27017,ac-h2nemxv-shard-00-01.mfluhic.mongodb.net:27017,ac-h2nemxv-shard-00-02.mfluhic.mongodb.net:27017/?ssl=true&replicaSet=atlas-higqef-shard-0&authSource=admin&retryWrites=true&w=majority'
+// console.log(process.env.URL);
 mongoose.set("strictQuery", "false");
 mongoose.connect(link, {
   useNewUrlParser: true,

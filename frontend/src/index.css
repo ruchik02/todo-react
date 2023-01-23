@@ -81,7 +81,7 @@ h1{
   box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.03);
 }
 .todos{
-  width: 493px;
+  width: 524px;
 }
 .todo-list>li{
   padding: 16px;
@@ -97,7 +97,7 @@ li{
   font-size: small;
 }
 .footer{
-  width: 457px;
+  width: 493px;
   display: flex;
   justify-content: space-between;
   padding: 16px;
@@ -145,6 +145,9 @@ span{
   font-size: 14px;
   vertical-align: baseline;
 
+}
+.add-btn{
+  visibility: hidden;
 }
 input:focus{
   border: none;
