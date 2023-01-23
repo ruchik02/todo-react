@@ -5,21 +5,32 @@ import axios from 'axios';
 const Item = () => {
    const [todos, setTodos] = useState([]);
    const [task, setTask] = useState("");
-   // const [editing, setEditing] = useState(false);
-   // const [currentTodo, setCurrentTodo] = useState({});
    useEffect(() => {
       const getTodos = async () => {
         const res = await axios.get('http://localhost:8000/gettodos');
         setTodos(res.data);
       };
+      for(let i in todos){
+         console.log(todos[i],"21");
+      }
       getTodos();
-    }, []);
+    }, [task]);
 const addTodo = async (e) => {
    e.preventDefault();
-   const res = await axios.post("http://localhost:8000/addtodo", { task, completed: false });
+   const res = await axios.post("http://localhost:8000/addtodo", { task, completed: false,id:Date.now() });
    setTodos([...todos, res.data]);
    setTask("");
-};
+  
+}
+const handleRemove= async(id)=>{
+   try {
+     await axios.delete(`http://localhost:8000/removetodo/:id`);
+      setTodos(todos.filter(todo => todo._id !==id));
+      console.log("hello 25 line",id);
+    } catch (err) {
+      console.log(err,"27");
+    }  
+}
 
   return (
     <div className="container">
@@ -40,13 +51,13 @@ const addTodo = async (e) => {
        </div>
    </form>
  <div className="todos" id="todos">
-   <ul id="ul" class="todo-list"> 
+   <ul id="ul" className="todo-list"> 
    {
       todos.map((todo)=>(
-         <li>
-                        <input type="checkbox" name="checkbox" id="checker" class="check-box"/>
+         <li key={todo._id}>
+                        <input type="checkbox"  name="checkbox" id="checker" className="check-box"/>
                         <label for="todoLbael" className="data">{todo.task}</label>
-                        <label for="todoCross" className="cross">X</label>
+                        <label for="todoCross" className="cross" onClick={() => handleRemove(todos._id)}>X</label>
        </li>
       ))
    }

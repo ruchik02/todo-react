@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const Todo = require("./todo.js");
+const mongoose  = require("mongoose");
 const router = express.Router();
 app.use(router);
 // get
@@ -37,10 +38,12 @@ router.post("/addtodo", async (req, res) => {
 // delete
 router.delete("/removetodo/:id",async(req,res)=>{
   try {
-    console.log("hellooo")
-    let id= req.params.id;
-    console.log(id);
+    console.log("hellooo 43")
+    let id= req.params.id
+    console.log(id,"42");
+    console.log(req.params,"47");
     let todos=await Todo.findByIdAndDelete(req.params.id);
+    console.log(todos,"44");
     let alltodos=await Todo.find();
     res.send(alltodos);
   }
