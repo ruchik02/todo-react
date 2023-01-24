@@ -36,27 +36,51 @@ router.post("/addtodo", async (req, res) => {
 });
 // active todo
 router.get('/getactivetodos', async (req, res) => {
-  try {
-    const activeTodos = await Todo.find({ completed: false });
     const todos=await Todo.find();
-    res.send(todos);
-  } catch (err) {
-    console.log(err,"44");
-    res.send(err);
-  }
+    let active=[];
+    for(i in todos){
+      if(todos[i].completed===false){
+        active.push(todos[i])
+      }
+    }
+    console.log(active,"47")
+    for(i in active){
+      await active[i].save(); 
+      console.log(active[i]);
+    }
+    res.send(active);
 });
 // getcompletedtodos
 router.get('/getcompletedtodos', async (req, res) => {
-  try {
-    const completedTodos = await Todo.find({ completed: true });
     const todos=await Todo.find();
-    res.send(todos);
-  } catch (err) {
-    console.log(err,"54");
-    res.send(err);
-  }
+    let completed=[]
+    for(i in todos){
+      if(todos[i].completed===true){
+        completed.push(todos[i])
+      }
+    }  console.log(completed,"46")
+      for(i in completed){
+        await completed[i].save(); 
+        console.log(completed[i]);
+      }
+      res.send(completed);
 });
 
+app.get("/completedtodos",async(req,res)=>{
+  const todos=await Todo.find();
+  let completed=[]
+  for(i in todos){
+      if(todos[i].completed===true){
+        completed.push(todos[i])
+      }
+    }  console.log(completed,"46")
+      for(i in completed){
+        await completed[i].save(); 
+        console.log(completed[i]);
+      }
+      res.send(completed);
+  
+})
 // delete
 router.delete("/removetodo/:id",async(req,res)=>{
   try {
