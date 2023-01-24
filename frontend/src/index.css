@@ -133,6 +133,10 @@ span{
 .filters li a.selected {
   border: 1px solid rgba(175, 47, 47, 0.2);
 }
+/* .border-filter{
+  border: 1px solid rgba(175, 47, 47, 0.1) !important;
+} */
+
 .clear-completed{
   /* visibility: hidden; */
   margin: 0;

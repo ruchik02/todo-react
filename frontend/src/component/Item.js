@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 const Item = () => {
    const [todos, setTodos] = useState([]);
    const [task, setTask] = useState("");
-   const [filter,setFilter]=useState("All");
+   const [filter,setFilter]=useState("all");
+   const [allCompleted, setAllCompleted] = useState(false);
+   // useEffect
    useEffect(() => {
       const getTodos = async () => {
         const res = await axios.get('http://localhost:8000/gettodos');
@@ -29,6 +31,20 @@ const handleRemove= async(id)=>{
       console.log(err,"27");
     }  
 }
+// toggle functionality
+const handleToggleAll = async () => {
+   try {
+     let response;
+     if (allCompleted) {
+       response = await axios.get('http://localhost:8000/markalluncompleted');
+     } else {
+       response = await axios.get('http://localhost:8000/markallcompleted');
+     }
+     setAllCompleted(!allCompleted);
+   } catch (err) {
+     console.error(err);
+   }
+ };
 // checked
 const markComplete = async (id) => {
    try {
@@ -36,7 +52,7 @@ const markComplete = async (id) => {
      const todos = await axios.get("http://localhost:8000/gettodos");
      setTodos(todos.data);
    } catch (error) {
-     console.error(error.message);
+     console.log(error.message);
    }
  };
 // unchecked
@@ -46,7 +62,7 @@ const markComplete = async (id) => {
      const todos = await axios.get("http://localhost:8000/gettodos");
      setTodos(todos.data);
    } catch (error) {
-     console.error(error.message);
+     console.log(error.message);
    }
  };
 
@@ -59,22 +75,23 @@ const handleClearCompleted=async()=>{
       console.log(err);
    }
 }
-// all
-// active
-const Active=(e)=>{
-   e.preventDefault()
-   setFilter({filter:'Active'})
-}
-// completed
-const Completed=(e)=>{
-   e.preventDefault();
-   setFilter({filter:'Completed'});
-}
-// All
-const All=(e)=>{
-   e.preventDefault();
-   setFilter({filter:'All'});
-}
+// filter of active,all and completed.
+const handleFilter = async (filter) => {
+   try {
+     let response;
+     if (filter === 'all') {
+       response = await axios.get('http://localhost:8000/getalltodos');
+     } else if (filter === 'active') {
+       response = await axios.get('http://localhost:8000/getactivetodos');
+     } else {
+       response = await axios.get('http://localhost:8000/getcompletedtodos');
+     }
+     setFilter(filter);
+     setTodos(response.data);
+   } catch (err) {
+     console.error(err);
+   }
+ };
 // count todos
 let count=todos.filter((i)=>{return i.completed===false}).length;
   return (
@@ -84,7 +101,8 @@ let count=todos.filter((i)=>{return i.completed===false}).length;
     </div>
     <form id="body" onSubmit={addTodo}>
        <div id="input">
-           <span id="downarrow">
+           <span id="downarrow" className={allCompleted?'checked':'none'}
+           onClick={handleToggleAll}>
                <i className="arrow down"></i>
            </span>
            <div id="takeinput">
@@ -131,13 +149,13 @@ let count=todos.filter((i)=>{return i.completed===false}).length;
        <span id="todo-count"><strong id="count">{count}</strong> items left</span>
        <ul className="filters">
           <li>
-             <a href='/all' className="selected">All</a>
+             <a href='/' onClick={() => handleFilter('all')} style={{border: filter==='all' ? "1px solid rgba(175, 47, 47, 0.1)" : "none"}} className='selected'>All</a>
           </li>
           <li>
-             <a href='/active' className="acive">Active</a>
+             <a href='/' onClick={() => handleFilter('active')} style={{border: filter==='active' ? "1px solid rgba(175, 47, 47, 0.1)" : "none"}} className='active'>Active</a>
           </li>
           <li>
-             <a href='/completed' className="completed">Completed</a>
+             <a href='/' onClick={() =>handleFilter('completed')} style={{border: filter==='completed' ? "1px solid rgba(175, 47, 47, 0.1)" : "none"}}  className='completed '>Completed</a>
           </li>
        </ul>
        <button className="clear-completed" id="clear-completed" onClick={handleClearCompleted}>Clear completed</button>

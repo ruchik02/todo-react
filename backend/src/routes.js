@@ -3,13 +3,13 @@ const app = express();
 const Todo = require("./todo.js");
 const router = express.Router();
 app.use(router);
-// get
+//  all todo
 router.get("/gettodos", async (req, res) => {
   const result = await Todo.find();
   console.log(result,"9");
   res.send(result);
 });   
-// post
+// add todo
 router.post("/addtodo", async (req, res) => {
   try {
     console.log(req.body,"13");
@@ -34,6 +34,29 @@ router.post("/addtodo", async (req, res) => {
     res.send(error);
   }
 });
+// active todo
+router.get('/getactivetodos', async (req, res) => {
+  try {
+    const activeTodos = await Todo.find({ completed: false });
+    const todos=await Todo.find();
+    res.send(todos);
+  } catch (err) {
+    console.log(err,"44");
+    res.send(err);
+  }
+});
+// getcompletedtodos
+router.get('/getcompletedtodos', async (req, res) => {
+  try {
+    const completedTodos = await Todo.find({ completed: true });
+    const todos=await Todo.find();
+    res.send(todos);
+  } catch (err) {
+    console.log(err,"54");
+    res.send(err);
+  }
+});
+
 // delete
 router.delete("/removetodo/:id",async(req,res)=>{
   try {
@@ -57,7 +80,7 @@ router.delete("/removetodo/:id",async(req,res)=>{
     const todos=await Todo.find();
      res.send(todos);
    });
-  //  markallcompleted
+  //  markallcompleted toggle
    router.get("/markallcompleted",async(req,res)=>{
     const todos=await Todo.find();
     for(let i=0;i<todos.length;i++)
@@ -71,7 +94,7 @@ router.delete("/removetodo/:id",async(req,res)=>{
     res.send(todos);
   })
 
-  // uncompleted
+  // uncompleted toggle 
   router.get("/markalluncompleted",async(req,res)=>{
     const todos=await Todo.find();
     for(let i=0;i<todos.length;i++)
